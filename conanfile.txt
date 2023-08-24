@@ -1,0 +1,6 @@
+[requires]
+fmt/10.0.0
+gtest/1.14.0
+
+[generators]
+cmake_find_package
