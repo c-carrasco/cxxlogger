@@ -14,8 +14,6 @@ RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100 \
   && update-alternatives --install /usr/bin/gcc-nm gcc-nm /usr/bin/gcc-nm-13 100 \
   && update-alternatives --install /usr/bin/gcc-ranlib gcc-ranlib /usr/bin/gcc-ranlib-13 100 \
   && update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-13 100
-# RUN wget -O - https://apt.llvm.org/llvm.sh | bash -s 16 all
-# RUN apt-get update && apt-get install --yes gcc-13 g++-13 cpp-13 cmake ninja-build ccache wget sudo
 RUN python3 -m pip install conan==1.60.2 --break-system-packages
 
 RUN useradd --create-home --shell /bin/bash --groups sudo $DOCKER_USER

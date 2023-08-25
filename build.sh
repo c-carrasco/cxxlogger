@@ -68,6 +68,10 @@ for I in "$@"; do
   if [[ $I == "run" ]]; then
     RUN_APP=1
   fi
+
+  if [[ $I =~ ^cxx[0-9]{2}$ ]]; then
+    CMAKE_OPTIONS+="-DCMAKE_CXX_STANDARD=${I:3:5} "
+  fi
 done
 
 if [[ -z $DEFAULT_BUILD_DIR ]]; then DEFAULT_BUILD_DIR=build; fi
@@ -91,13 +95,20 @@ if [[ $RUN_DOCKER -eq 1 ]]; then
 
   docker build -f docker/Dockerfile.$COMPILER --build-arg DOCKER_USER=$USER -t $DOCKER_IMAGE_NAME .
 
-  docker run -it --rm $GPU \
+  ARGS=$(echo $@ | sed 's/docker=[a-z0-9]*//' | sed 's/docker//g' | sed 's/^[[:space:]]*//g')
+  if [[ $ARGS != "" ]]; then
+    DOCKER_RUN_CMD="$0 $ARGS"
+  else
+    DOCKER_RUN_CMD=/bin/bash
+  fi
+
+  docker run -it --rm \
     -v $PWD:/workspace/source \
     -v $PWD/.conan.$COMPILER/:/home/$USER/.conan \
     -v $PWD/.ccache.$COMPILER:/.ccache \
     -w /workspace/source \
     $DOCKER_IMAGE_NAME \
-    /bin/bash
+    $DOCKER_RUN_CMD
 
   exit 0
 fi

@@ -1,0 +1,23 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build Debug GCC 13
+        run: ./build.sh docker=gcc13 debug clean uban=on asan=on test
+      - name: Build Release GCC 13
+        run: ./build.sh docker=gcc13 release clean test
+
+      - name: Build Debug Clang 16
+        run: ./build.sh docker=clang16 debug clean uban=on asan=on test
+      - name: Build Release Clang 16
+        run: ./build.sh docker=clang16 release clean test
