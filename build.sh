@@ -100,9 +100,10 @@ if [[ $RUN_DOCKER -eq 1 ]]; then
     DOCKER_RUN_CMD="$0 $ARGS"
   else
     DOCKER_RUN_CMD=/bin/bash
+    DOCKER_TTY="t"
   fi
 
-  docker run -it --rm \
+  docker run -i$DOCKER_TTY --rm \
     -v $PWD:/workspace/source \
     -v $PWD/.conan.$COMPILER/:/home/$USER/.conan \
     -v $PWD/.ccache.$COMPILER:/.ccache \

@@ -8,7 +8,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
   # configure GNU C++ compiler
 
   set (COMPILER_NAME "gcc")
-  set (COMPILER_VERSION ${COMPILER_VERSION_MAJOR}.${COMPILER_VERSION_MINOR})
+  set (COMPILER_VERSION ${COMPILER_VERSION_MAJOR})
   set (COMPILER_LIBCXX "libstdc++11")
 
   # format error messages so that they fit on lines of about 72 chars
