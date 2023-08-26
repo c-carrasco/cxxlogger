@@ -7,8 +7,8 @@ GENERATOR="Unix Makefiles"
 CMAKE_OPTIONS=""
 RUN_TESTS=0
 RUN_DOCKER=0
+GEN_DOC=0
 COMPILER=gcc13
-RUN_APP=0
 CLEAN=0
 
 if [[ $(uname -s) == "Darwin" ]]; then
@@ -65,12 +65,12 @@ for I in "$@"; do
     fi
   fi
 
-  if [[ $I == "run" ]]; then
-    RUN_APP=1
-  fi
-
   if [[ $I =~ ^cxx[0-9]{2}$ ]]; then
     CMAKE_OPTIONS+="-DCMAKE_CXX_STANDARD=${I:3:5} "
+  fi
+
+  if [[ $I == "doc" ]]; then
+    GEN_DOC=1
   fi
 done
 
@@ -127,7 +127,7 @@ pushd $BUILD_DIR
     cmake -G "${GENERATOR}" ${CMAKE_OPTIONS} $ROOT_DIR
   fi
 
-  cmake --build . --parallel $NUM_CORES
+  cmake --build . --parallel $NUM_CORES --target all $([ $GEN_DOC -eq 1 ] && echo "documentation")
 
   if [[ $RUN_TESTS -eq 1 ]]; then
     GTEST_COLOR=yes ctest --verbose

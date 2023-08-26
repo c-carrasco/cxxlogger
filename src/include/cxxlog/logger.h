@@ -21,7 +21,7 @@
 
 namespace cxxlog {
 
-//! @cond Doxygen_Suppress
+/// @cond Doxygen_Suppress
 #ifdef CXXLOG_USE_FMT_LIBRARY
   namespace fmtlib = fmt;
 #else
@@ -36,48 +36,56 @@ namespace cxxlog {
 
   }
 #endif
-//! @endcond
+/// @endcond
 
-/// @class Logger logger.h hacommon/logger.h
-/// @brief Logger Class
+/// @class Logger logger.h cxxlog/logger.h
+/// @brief A logging utility for outputting messages with different severity levels.
 ///
-/// This class makes it possible to use log file in multi-threaded applications.
 /// The information added at the begin of each line can be customized:
-///   void MyCustomInfo (std::ostream &out, Logger::Level l) {
-///     out << "My custom header " << static_cast<int>(l) << " - ";
+/// @code{.cpp}
+///   static void myCustomPrefix (std::ostream &out, cxxlog::Logger::Severity s) {
+///     out << "My custom header " << static_cast<int>(s) << " - ";
 ///   }
 ///   ...
 ///   int main () {
-///     Logger log (std::cout, Logger::kDebug, MyCustomInfo);
+///     Logger log (std::cout, Logger::kDebug, myCustomPrefix);
 ///     ...
 ///     log.info ("hello world");
 ///     log.error ("unexpected error");
 ///     ...
 ///   }
-///
+/// @endcode
+/// @code{.sh}
 ///   ---- stdout ----
 ///   My Custom Header 1 - hello world
 ///   My Custom Header 3 - unexpected error
-///
-///  By default Logger adds the following information:
+/// @endcode
+/// By default Logger adds the following information:
+/// @code{.sh}
 ///   MM/DD/YYYY HH:MM:SS LEVEL -
+/// @endcode
 ///  The class also allow to specify what kind of info is being added to the log
 ///  file and what kind of info must be added.
 class Logger {
   public:
+    /// @enum Severity
+    /// @brief Enumeration representing different severity levels for log messages
     enum class Severity: std::int_fast8_t {
-      kVerbose = 0x00,
-      kDebug = 0x01,
-      kInfo = 0x02,
-      kWarn = 0x03,
-      kError = 0x04,
-      kFatal = 0x05,
-      kNone = 0x7F
+      kVerbose = 0x00, ///< Verbose level.
+      kDebug = 0x01,   ///< Debug level.
+      kInfo = 0x02,    ///< Information level.
+      kWarn = 0x03,    ///< Warning level.
+      kError = 0x04,   ///< Error level.
+      kFatal = 0x05,   ///< Fatal error level.
+      kNone = 0x7F     ///< No logging.
     };
 
     using FormatHeader = std::function<void (std::ostream &out, Logger::Severity)>;
 
-    /// @brief Constructor
+    /// @brief Constructor for the Logger class.
+    /// @param out The output stream to which log messages will be written.
+    /// @param severity The severity level threshold for logging.
+    /// @param format The formatting function for log message headers.
     Logger (
       std::ostream &out,
       Severity severity = Severity::kInfo,
@@ -90,7 +98,14 @@ class Logger {
       // empty
     }
 
-    /// @brief Prints messages with the level Severity::kVerbose
+    /// @brief Logs a verbose-level message.
+    ///
+    /// This method is used to log a verbose-level message. The message will be output only
+    /// if the logger is enabled for the verbose severity level.
+    ///
+    /// @tparam Args Variadic template parameter for the arguments to format the log message.
+    /// @param fmt The format string for the log message.
+    /// @param args The arguments to be inserted into the format string.
     template<typename... Args>
     inline void verbose (fmtlib::format_string<Args...> fmt, Args && ... args) const {
       if (isEnabled (Severity::kVerbose)) {
@@ -99,7 +114,14 @@ class Logger {
       }
     }
 
-    /// @brief Prints messages with the level Severity::kDebug
+    /// @brief Logs a debug-level message.
+    ///
+    /// This method is used to log a debug-level message. The message will be output only
+    /// if the logger is enabled for the debug severity level.
+    ///
+    /// @tparam Args Variadic template parameter for the arguments to format the log message.
+    /// @param fmt The format string for the log message.
+    /// @param args The arguments to be inserted into the format string.
     template<typename... Args>
     inline void debug (fmtlib::format_string<Args...> fmt, Args && ... args) const {
       if (isEnabled (Severity::kDebug)) {
@@ -108,7 +130,14 @@ class Logger {
       }
     }
 
-    /// @brief Prints messages with the level Level.kInfo
+    /// @brief Logs an info-level message.
+    ///
+    /// This method is used to log an info-level message. The message will be output only
+    /// if the logger is enabled for the info severity level.
+    ///
+    /// @tparam Args Variadic template parameter for the arguments to format the log message.
+    /// @param fmt The format string for the log message.
+    /// @param args The arguments to be inserted into the format string.
     template<typename... Args>
     inline void info (fmtlib::format_string<Args...> fmt, Args && ... args) const {
       if (isEnabled (Severity::kInfo)) {
@@ -117,7 +146,14 @@ class Logger {
       }
     }
 
-    /// @brief Prints messages with the level Level.kWarn
+    /// @brief Logs a warning-level message.
+    ///
+    /// This method is used to log a warning-level message. The message will be output only
+    /// if the logger is enabled for the warning severity level.
+    ///
+    /// @tparam Args Variadic template parameter for the arguments to format the log message.
+    /// @param fmt The format string for the log message.
+    /// @param args The arguments to be inserted into the format string.
     template<typename... Args>
     inline void warn (fmtlib::format_string<Args...> fmt, Args && ... args) const {
       if (isEnabled (Severity::kWarn)) {
@@ -126,7 +162,14 @@ class Logger {
       }
     }
 
-    /// @brief Prints messages with the level Level.kError
+    /// @brief Logs an error-level message.
+    ///
+    /// This method is used to log an error-level message. The message will be output only
+    /// if the logger is enabled for the error severity level.
+    ///
+    /// @tparam Args Variadic template parameter for the arguments to format the log message.
+    /// @param fmt The format string for the log message.
+    /// @param args The arguments to be inserted into the format string.
     template<typename... Args>
     inline void error (fmtlib::format_string<Args...> fmt, Args && ... args) const {
       if (isEnabled (Severity::kError)) {
@@ -135,7 +178,14 @@ class Logger {
       }
     }
 
-    /// @brief Prints messages with the level Level.kFatal
+    /// @brief Logs a fatal-level message.
+    ///
+    /// This method is used to log a fatal-level message. The message will be output only
+    /// if the logger is enabled for the fatal severity level.
+    ///
+    /// @tparam Args Variadic template parameter for the arguments to format the log message.
+    /// @param fmt The format string for the log message.
+    /// @param args The arguments to be inserted into the format string.
     template<typename... Args>
     inline void fatal (fmtlib::format_string<Args...> fmt, Args && ... args) const {
       if (isEnabled (Severity::kFatal)) {
@@ -144,13 +194,21 @@ class Logger {
       }
     }
 
-    /// @brief Sets the threshold for this logger to level `l`. Logging messages which are less severe than level will be ignored
+    /// @brief Sets the severity threshold for the logger.
+    ///
+    /// Logging messages which are less severe than the specified level will be ignored.
+    ///
+    /// @param s The new severity level threshold.
+    /// @return The previous severity level threshold.
     inline Severity setLevel (Severity s) noexcept { return std::exchange (_severity, s); }
 
-    /// @brief Returns the current level.
+    /// @brief Gets the current severity level threshold of the logger.
+    /// @return The current severity level threshold.
     inline Severity getLevel () const noexcept { return _severity; }
 
-    /// @brief Returns if the current logger is enabled for the specified level.
+    /// @brief Checks if the logger is enabled for the specified severity level.
+    /// @param s The severity level to check.
+    /// @return `true` if the logger is enabled for the specified level, otherwise `false`.
     inline bool isEnabled (Severity s) const noexcept { return _severity <= s; }
 
   private:
@@ -161,6 +219,9 @@ class Logger {
 
     static constexpr std::array<const char *, 6> kStrLevels { "V", "D", "I", "W", "E", "F" };
 
+    /// @brief The dedault method to format and output the log message header.
+    /// @param out The output stream.
+    /// @param s The severity level of the log message.
     static void _formatHeader (std::ostream &out, Severity s) {
       const std::time_t now { std::time (nullptr) };
       const auto *t { std::localtime (&now) };

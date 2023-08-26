@@ -8,7 +8,9 @@ project (
 )
 
 include (cmake/configure_compiler.cmake)
+include (cmake/configure_version.cmake)
 include (cmake/conan.cmake)
+include (cmake/doxygen.cmake)
 
 if (NOT SUPPORT_STD_FORMAT OR CMAKE_CXX_STANDARD LESS_EQUAL 17)
   add_compile_definitions (CXXLOG_USE_FMT_LIBRARY)
