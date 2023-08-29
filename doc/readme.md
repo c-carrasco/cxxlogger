@@ -53,3 +53,7 @@ However, you can exercise full control over the formatting by crafting your cust
 # {fmt} library
 
 If you need/want to use [{fmt}](https://github.com/fmtlib/fmt) library, you have to add the `CXXLOG_USE_FMT_LIBRARY` preprocessor definition to the compilation options.
+
+# Installation
+
+Copy the `src/include/cxxlog` folder to your project.

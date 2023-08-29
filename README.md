@@ -112,3 +112,7 @@ However, you can exercise full control over the formatting by crafting your cust
 
   logger.info ("Hello, world!\n"); // outputs: [FOO:1] Hello, world!
 ```
+
+# Installation
+
+Copy the `src/include/cxxlog` folder to your project and if you want/need to use the `fmt library` add the `CXXLOG_USE_FMT_LIBRARY` preprocessor definition to the compilation options (and don't forget to link against _fmt_).
