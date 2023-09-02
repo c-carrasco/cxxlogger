@@ -1,7 +1,7 @@
 CXX Logger
 ==========
 
-![Linux](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
+[![Linux]https://github.com/c-carrasco/cxxlogger/actions/workflows/main.yml/badge.svg)](https://github.com/c-carrasco/cxxlogger/actions/workflows/main.yml)
 
 # Overview
 
