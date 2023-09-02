@@ -1,6 +1,8 @@
 CXX Logger
 ==========
 
+![Linux](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
+
 # Overview
 
 Welcome to the CXX Logger, a lightweight, header-only library designed for easy logging in C++17 or newer standards.
