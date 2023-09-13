@@ -22,8 +22,3 @@ jobs:
         run: ./build.sh docker=clang16 debug clean uban=on asan=on test
       - name: Build Release Clang 16 C++20
         run: ./build.sh docker=clang16 release clean test doc
-
-      - name: Build Debug GCC 13 C++17
-        run: ./build.sh docker=gcc13 debug clean ninja uban=on asan=on cxx17 test
-      - name: Build Release GCC 13 C++17
-        run: ./build.sh docker=gcc13 release clean ninja cxx17 test

@@ -5,8 +5,9 @@ CXX Logger
 
 # Overview
 
-Welcome to the CXX Logger, a lightweight, header-only library designed for easy logging in C++17 or newer standards.
-This library provides a hassle-free experience for incorporating logging capabilities into your projects. It utilizes the [fmt library](https://github.com/fmtlib/fmt) for C++17, but seamlessly transitions to using std::format for C++20 (or newer) with GCC versions 13.x or higher, as well as Clang versions 16 or higher, eliminating external dependencies.
+Welcome to the CXX Logger, a lightweight, header-only library designed for easy logging in C++20 or newer standards.
+This library provides a hassle-free experience and is designed to be a simple and universal logging library with support for multiple transports for incorporating logging capabilities into your projects. A transport is essentially a storage device for your logs.
+As a workaround for older compilers (GCC < 13, Clang < 16 and AppleClang < 15) the library support [fmt library](https://github.com/fmtlib/fmt).
 
 # Prerequisites
 
@@ -52,8 +53,6 @@ Use docker for local development.
   Available options:
     - `gcc13`: Use GCC 13 as default compiler (selected if no compiler is specified).
     - `clang16`: Use Clang 16 as default compiler.
-* **_cxx17_**
-Set the C++ standard to C++17 (C++20 by default)
 
 Examples:
 
@@ -61,16 +60,16 @@ Examples:
 # Compile code in release mode
 ./build.sh clean release
 
-# Build code in debug mode using Docker image with Clang 16, C++17, Address Sanitizer enabled, and run unit tests
-./build.sh docker=clang16 debug cxx17 test asan=on
+# Build code in debug mode using Docker image with Clang 16, Address Sanitizer enabled, and run unit tests
+./build.sh docker=clang16 debug test asan=on
 
 # Start docker dev environment with gcc13
 ./build.sh docker=gcc13
 ```
 
-# Getting Started in a Flash
+# Quick Start Guide
 
-1. Include the `logger.h` header.
+### 1. Include the `logger.h` header.
 
 ```CPP
 #include <cxxlog/logger.h>
@@ -78,43 +77,88 @@ Examples:
 
 **Note:** All functions, classes, structures, enums, ...  reside within the `cxxlog` namespace.
 
-2. Craft your Logger instance
+### 2. Initialize your Logger with built-In transports
 
 ```CPP
-  const cxxlog::Logger logger { std::cout, cxxlog::Logger::kDebug };
+  const cxxlog::Logger<cxxlog::transport::OutputStream> logger { cxxlog::Severity::kDebug };
+  logger.transport (cxxlog::transport::OutputStream { std::cout });
 ```
 
-3. and just log messages.
+### or use your custom transports
 
 ```CPP
-  logger.info ("Hello world!\n");
-  ...
-  logger.debug ("number of message: {}/{}\n", count, total);
-  ...
-```
-
-# Customizing Your Log Header
-
-By default `cxxlog::Logger` prefixes each log message with the local timestamp and its corresponding severity level:
-
-```
-2023/08/26 18:45:09 W: ...
-```
-
-However, you can exercise full control over the formatting by crafting your custom header during the logger instantiation:
-
-```CPP
-  const cxxlog::Logger logger {
-    std::cout,
-    cxxlog::Logger::kDebug,
-    [] (std::ostream &out, Severity s) {
-      out << "[FOO: " << static_cast<int> (s) << "] ";
+  struct MyCustomTransport {
+    void log (const std::string &msg, cxxlog::Severity severity, std::chrono::milliseconds ts) const {
+      // Your custom logging logic here
+      // ...
     }
   };
 
-  logger.info ("Hello, world!\n"); // outputs: [FOO:1] Hello, world!
+  const cxxlog::Logger<
+    cxxlog::transport::OutputStream,
+    MyCustomTransport
+  > logger { cxxlog::Severity::kDebug };
+
+  logger.transport (cxxlog::transport::OutputStream { std::cout });
+  logger.transport (MyCustomTransport {});
 ```
+
+### 3. Start logging messages
+
+```CPP
+  logger.info ("Hello world!");
+  ...
+  logger.debug ("number of message: {}/{}", count, total);
+  ...
+```
+
+# Creating custom transports.
+
+The library allows you to create your own transport classes to extend and customize the logging capabilities.
+
+A custom transport is a class with a `log` method, having the following signature:
+
+```CPP
+  void log (const std::string &msg, cxxlog::Severity severity, std::chrono::milliseconds ts) const;
+```
+
+Inside the method, you can define you own logging logic:
+
+```CPP
+  class AndroidLog {
+    public:
+      AndroidLog (std::string tag): _tag { std::move (tag) } {
+        // empty
+      }
+
+      void log (const std::string &msg, cxxlog::Severity severity, std::chrono::milliseconds) const {
+        __android_log_write (kMap[static_cast<int>(severity)], _tag.c_str(), msg.c_str());
+      }
+
+    private:
+      std::string _tag;
+
+      static constexpr std::array<int, 6> kMap {
+        ANDROID_LOG_VERBOSE,
+        ANDROID_LOG_DEBUG,
+        ANDROID_LOG_INFO,
+        ANDROID_LOG_WARN,
+        ANDROID_LOG_ERROR,
+        ANDROID_LOG_FATAL
+      };
+  };
+
+```
+
+# Built-in transports
+
+There are several core transports included in `cxxlog::transport` namespace.
+
+- *cxxlog::transport::OutputStream*: Stores log messages into the specified [std::ostream](https://en.cppreference.com/w/cpp/io/basic_ostream) object (e.g., std::cout or std::ofstream).
 
 # Installation
 
-Copy the `src/include/cxxlog` folder to your project and if you want/need to use the `fmt library` add the `CXXLOG_USE_FMT_LIBRARY` preprocessor definition to the compilation options (and don't forget to link against _fmt_).
+To use the library, follow these steps:
+
+- 1. Copy the `src/include/cxxlog` folder into your project.
+- 2. If you want/need to use the `fmt library`, add the `CXXLOG_USE_FMT_LIBRARY` preprocessor definition to your compilation options. Don't forget to link against _fmt_ library.
