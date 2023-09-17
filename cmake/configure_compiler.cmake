@@ -36,6 +36,9 @@ elseif ((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHE
     if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 16)
       option (SUPPORT_STD_FORMAT ON)
     endif()
+
+    # add -fexperimental-library option to enable std::format_string with clang 16
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexperimental-library")
   endif()
 
   set (COMPILER_LIBCXX "libc++")
@@ -44,7 +47,7 @@ elseif ((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHE
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
 
   # set correct standard library
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=${COMPILER_LIBCXX} -fexperimental-library")
+  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=${COMPILER_LIBCXX}")
 else()
   message (FATAL_ERROR "${CMAKE_CXX_COMPILER_ID} compiler not supported!")
 endif()
