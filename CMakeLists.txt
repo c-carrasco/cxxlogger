@@ -12,6 +12,8 @@ include (cmake/configure_version.cmake)
 include (cmake/conan.cmake)
 include (cmake/doxygen.cmake)
 
+option (CXXLOG_BUILD_TESTS "Set to OFF to no build tests" ON)
+
 if (NOT SUPPORT_STD_FORMAT OR CMAKE_CXX_STANDARD LESS_EQUAL 17)
   add_compile_definitions (CXXLOG_USE_FMT_LIBRARY)
 endif()

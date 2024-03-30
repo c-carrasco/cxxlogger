@@ -7,4 +7,6 @@ target_include_directories (cxxlogger INTERFACE
 
 target_link_libraries (cxxlogger INTERFACE fmt::fmt)
 
-add_subdirectory (test)
+if (CXXLOG_BUILD_TESTS)
+  add_subdirectory (test)
+endif()
