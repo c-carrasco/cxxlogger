@@ -67,6 +67,10 @@ Examples:
 ./build.sh docker=gcc13
 ```
 
+# Documentation
+
+See [documentation](https://c-carrasco.github.io/cxxlogger/) for details.
+
 # Quick Start Guide
 
 ### 1. Include the `logger.h` header.
