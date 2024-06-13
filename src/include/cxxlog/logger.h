@@ -10,6 +10,7 @@
 #include <cinttypes>
 #include <list>
 #include <string>
+#include <utility>
 #include <variant>
 
 #ifdef CXXLOG_USE_FMT_LIBRARY
